@@ -1,0 +1,98 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}NETNOOK{% endblock %}
+
+{% block extra_head %}
+<!-- Additional head content here -->
+{% endblock %}
+
+{% block content %}
+
+<div class="p-0 m-0">
+    <section class="relative min-h-screen w-full flex items-center justify-center">
+        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80 z-10"></div>
+        
+        <!-- Slideshow Container -->
+        <div class="relative w-full h-full text-center z-20">
+            <div class="relative w-full h-full">
+                <!-- Image Slide -->
+                <img id="slideImage" class="w-full h-full object-cover" src="{% static 'slideimg/blackpanther2.png' %}" alt="Slide Image" style="max-height: 100vh;">
+            </div>
+
+            <!-- Slide Navigation -->
+            <button id="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-75 transition duration-300 ease-in-out shadow-lg hover:shadow-xl flex items-center justify-center z-30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+    
+            <button id="nextSlide" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full hover:bg-opacity-75 transition duration-300 ease-in-out shadow-lg hover:shadow-xl flex items-center justify-center z-30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Search Form -->
+    <div class="text-center my-8">
+        <form action="{% url 'search_movies' %}" method="get" class="flex justify-center p-4 rounded-md shadow-md">
+            <input type="text" name="q" placeholder="Search for a movie..." class="p-2 border border-gray-300 rounded-l-md text-black focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
+            <button type="submit" class="bg-gradient-to-r from-red-500 to-red-700 text-white p-3 rounded-r-md hover:from-red-600 hover:to-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 transition duration-300 transform hover:scale-105 shadow-lg">Search</button>
+        </form>
+    </div>
+    <!-- Top pick Section -->
+    <div class="mb-8 p-4"> <!-- เพิ่ม padding รอบกริด -->
+        <h2 class="text-2xl font-bold text-red-600 mb-4">
+            Top pick <span class="text-white">TV shows and movies just for you</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> <!-- เพิ่ม gap -->
+            {% for i in "123456" %}
+            <div class="relative group">
+                <a href="{% url 'toppick' i %}" class="block">
+                    <!-- ปรับขนาดของรูปภาพและใช้ object-cover -->
+                    <img src="{% static 'images/POSTER'|add:i|add:'.png' %}" alt="Movie {{ i }}" class="w-3/4 h-auto mx-auto object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 group-hover:shadow-xl group-hover:ring-4 group-hover:ring-red-500">
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slideImage = document.getElementById('slideImage');
+        const imagePaths = [
+            "{% static 'slideimg/blackpanther2.png' %}",
+            "{% static 'slideimg/titanic3.png' %}",
+            "{% static 'slideimg/moonfall2.png' %}",
+            "{% static 'slideimg/green2.png' %}"
+        ];
+        
+        let currentIndex = 0;
+
+        function updateImage() {
+            // Start fading out
+            slideImage.style.transition = 'opacity 0.5s ease-in-out';
+            slideImage.style.opacity = 0; 
+            
+            // Change image source and then fade in
+            setTimeout(() => {
+                slideImage.src = imagePaths[currentIndex];
+                slideImage.style.opacity = 1; // Fade in
+            }, 500); // Duration matches fade-out time
+        }
+
+        document.getElementById('nextSlide').addEventListener('click', function () {
+            currentIndex = (currentIndex + 1) % imagePaths.length; // Loop to the first image
+            updateImage();
+        });
+
+        document.getElementById('prevSlide').addEventListener('click', function () {
+            currentIndex = (currentIndex - 1 + imagePaths.length) % imagePaths.length; // Loop to the last image
+            updateImage();
+        });
+    });
+</script>
+{% endblock script %}
